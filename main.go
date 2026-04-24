@@ -338,7 +338,7 @@ func handleIP(w http.ResponseWriter, r *http.Request) {
 		DNS:           geo.DNS,
 	}
 
-	w.Header().Set("Cache-Control", "no-store")
+	w.Header().Set("Cache-Control", "private, max-age=0, no-store, no-cache, must-revalidate")
 
 	if isCLI(r.UserAgent()) {
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
