@@ -11,7 +11,7 @@ services:
         - traefik.enable=true
 
         # HTTPS router
-        - traefik.http.routers.whoami-secure.rule=Host(`whoami`)
+        - traefik.http.routers.whoami-secure.rule=Host(`whoami.upset.dev`)
         - traefik.http.routers.whoami-secure.entrypoints=websecure
         - traefik.http.routers.whoami-secure.tls=true
         - traefik.http.routers.whoami-secure.service=whoami
