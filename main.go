@@ -100,7 +100,7 @@ type IPResponse struct {
 
 // getClientIP extracts the real client IP from reverse proxy headers,
 // falling back to the direct connection address.
-// Priority: X-Forwarded-For → X-Real-IP → CF-Connecting-IP → RemoteAddr
+// Priority: CF-Connecting-IP → X-Forwarded-For → X-Real-IP → RemoteAddr
 func getClientIP(r *http.Request) string {
 	// Cloudflare
 	if ip := r.Header.Get("CF-Connecting-IP"); ip != "" {
