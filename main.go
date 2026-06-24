@@ -197,6 +197,22 @@ func sanitizeIP(ip string) string {
 	return strings.TrimSpace(ip)
 }
 
+// resolveIP determines which IP to look up. An explicit IP supplied via the
+// path (/8.8.8.8) takes precedence over the client's own address. ok is false
+// when the caller supplied a value that is not a valid IP address.
+func resolveIP(r *http.Request) (string, bool) {
+	// Path parameter: /8.8.8.8
+	if p := strings.Trim(r.URL.Path, "/"); p != "" {
+		if net.ParseIP(p) == nil {
+			return "", false
+		}
+		return p, true
+	}
+
+	// Fall back to the client's own IP.
+	return getClientIP(r), true
+}
+
 // sanitizeUA strips control characters, ANSI escape sequences, and
 // truncates to a safe length to prevent injection or abuse.
 func sanitizeUA(ua string) string {
@@ -316,7 +332,11 @@ func handleIP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ipStr := getClientIP(r)
+	ipStr, ok := resolveIP(r)
+	if !ok {
+		http.Error(w, `{"error":"invalid ip"}`, http.StatusBadRequest)
+		return
+	}
 	geo := lookupGeo(ipStr)
 
 	resp := IPResponse{

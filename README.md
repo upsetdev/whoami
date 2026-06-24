@@ -86,6 +86,7 @@ Geolocation data is sourced from [MaxMind GeoLite2](https://dev.maxmind.com/geoi
 ## Features
 
 - **IP geolocation**: country, city, coordinates, timezone, ASN via MaxMind GeoLite2.
+- **Arbitrary IP lookup**: query any IP via the path (`/8.8.8.8`), not just the caller's.
 - **Reverse DNS**: resolves PTR record for the client IP.
 - **Reverse proxy support**: reads `CF-Connecting-IP`, `X-Forwarded-For`, `X-Real-IP` in priority order.
 - **CORS enabled**: accessible from any origin via browser `fetch()`.
@@ -150,16 +151,22 @@ docker inspect --format='{{.State.Health.Status}}' <container>
 
 ## Endpoints
 
-| Endpoint      | Description                             |
-| ------------- | --------------------------------------- |
-| `GET /`       | IP info + geolocation                   |
-| `GET /health` | Health check: returns `{"status":"ok"}` |
+| Endpoint      | Description                                            |
+| ------------- | ----------------------------------------------------- |
+| `GET /`       | IP info + geolocation for the client                  |
+| `GET /{ip}`   | IP info + geolocation for a specific IP (e.g. `/8.8.8.8`) |
+| `GET /health` | Health check: returns `{"status":"ok"}`               |
+
+Passing an invalid IP in the path returns `400 {"error":"invalid ip"}`.
 
 ## Test
 
 ```bash
 # Local
 curl http://localhost:8080
+
+# Look up a specific IP
+curl http://localhost:8080/8.8.8.8
 
 # With simulated proxy headers
 curl -H "X-Forwarded-For: 203.0.113.50" http://localhost:8080
