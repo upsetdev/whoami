@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   whoami:
-    image: ghcr.io/fransallen/whoami:latest
+    image: ghcr.io/upsetdev/whoami:latest
     networks:
       - traefik-public
     deploy:
